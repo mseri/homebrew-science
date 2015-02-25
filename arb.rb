@@ -6,17 +6,9 @@ require "formula"
 
 class Arb < Formula
   homepage "http://fredrikj.net/arb/index.html"
-  #tag "math"
   url "https://github.com/fredrik-johansson/arb/archive/2.5.0.tar.gz"
   sha1 "ba51573e0c50250bbb16bfca027dc26531347f12"
-  head "https://github.com/fredrik-johansson/arb.git", :branch => "trunk"
-
-  bottle do
-    root_url "https://downloads.sf.net/project/machomebrew/Bottles/science"
-    sha1 "617731bca8e304ff9351c0fbee22ac078bbeee5e" => :yosemite
-    sha1 "ec020b7499a3b7d19fa4a2c44d2abc30d34c21aa" => :mavericks
-    sha1 "29dbbfc5cf472a0922376ec47e40975b9caec6bb" => :mountain_lion
-  end
+  head "https://github.com/fredrik-johansson/arb.git"
 
   depends_on "gmp"
   depends_on "mpfr"
@@ -25,17 +17,17 @@ class Arb < Formula
   # Will be enabled once the new stable (with patched tests) is released
   # some of the tests in 2.5.0 are broken because they call not yet implemented
   # methods
-  #option "with-check", "Enable build-time checking (not recommended)"
+  # option "with-check", "Enable build-time checking (not recommended)"
 
   def install
     system "./configure", "--prefix=#{prefix}"
     # We need to remove this line to have 2.5.0 compiled on OSX
     # it is fixed in the new version, this line will disappear then
-    system "sed -i.brew.orig 's/$(QUIET_AR) $(AR) rcs libarb.a $(OBJS);//' Makefile"
+    inreplace "Makefile", "$(QUIET_AR) $(AR) rcs libarb.a $(OBJS);", ""
     system "make"
     # Will be enabled once the new stable (with patched tests) is released
     # see above
-    #system "make", "check" if build.with? "check"
+    # system "make", "check" if build.with? "check"
     system "make", "install"
   end
 
@@ -56,7 +48,7 @@ class Arb < Formula
         return EXIT_SUCCESS;
       }
     EOS
-    system ENV.cc, "test.c", "-larb", "-lflint", "-I/usr/local/include/flint", "-o", "test"
+    system ENV.cc, "test.c", "-larb", "-lflint", "-I#{Formula["flint"].opt_include}/flint", "-o", "test"
     system "./test"
   end
 end

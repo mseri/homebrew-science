@@ -48,7 +48,7 @@ class Arb < Formula
         return EXIT_SUCCESS;
       }
     EOS
-    system ENV.cc, "test.c", "-larb", "-lflint", "-I#{Formula["flint"].opt_include}/flint", "-o", "test"
+    system ENV.cc, "test.c", "-larb", "-lflint", "-I#{Formula['flint'].include}/flint", "-o", "test"
     system "./test"
   end
 end
